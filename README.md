@@ -47,7 +47,7 @@ With its sleek dark/neon green hacker aesthetic, it bypasses restrictions stealt
 
 ## ⬇️ Installation
 
-1. [Download](https://github.com/Max-Eee/NeoPass/archive/refs/heads/main.zip) the extension.
+1. [Download](https://github.com/doctorbhh/pass/archive/refs/heads/main.zip) the extension.
 2. Open Chrome and go to the Extensions page by typing `chrome://extensions/`.
 3. Enable **Developer mode** in the top right corner.
 4. Click on **Load unpacked** and select the folder where the extension is located.
