@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass</title>
+    <style>
+        :root {
+            --bg: #050505; /* pure black */
+            --bg-card: rgba(0, 255, 65, 0.05); /* subtle green tint */
+            --border: rgba(0, 255, 65, 0.2); /* neon green border */
+            --text-main: #00FF41; /* matrix green */
+            --text-muted: #008F11; /* darker green */
+            --accent: #00FF41; 
+            --accent-hover: #008F11; 
+            --danger: #FF003C; /* cyberpunk red */
+            --danger-hover: #CC0030;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+            width: 380px;
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        h1, h2, h3, p { margin: 0; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .header h1::before, .header h1::after {
+            content: "Pass";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        
+        .header h1::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        
+        .header h1::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 20% 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(30% 0 20% 0); }
+            40% { clip-path: inset(70% 0 10% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(50% 0 30% 0); }
+            100% { clip-path: inset(5% 0 80% 0); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            font-family: inherit;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--text-main);
+        }
+        .tab-button.active {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        /* Inputs */
+        .label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .input {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-main);
+            font-size: 0.875rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        select.input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 32px;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Provider Toggles */
+        .provider-toggles {
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .provider-btn {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .provider-btn.active {
+            background: var(--bg-card);
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* iOS style toggle switch */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Shortcuts */
+        .shortcut-group {
+            margin-bottom: 16px;
+        }
+        
+        .shortcut-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .shortcut-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .shortcut-key {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            color: var(--text-main);
+            margin-right: 12px;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .shortcut-desc {
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        .badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: #FBBF24;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            font-size: 0.6rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-left: 6px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .flex-col { display: flex; flex-direction: column; }
+
+        /* Utils */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        #statusMessage, #error { font-size: 0.75rem; margin-bottom: 12px; text-align: center; }
+        .error-message { color: var(--danger); }
+        .success-message { color: #10B981; }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Pass</h1>
+    </div>
+    
+    <div id="statusMessage"></div>
+    <div id="error" class="error-message hidden"></div>
+
+    <div class="tabs">
+        <button class="tab-button active" data-tab="settings-tab">Settings</button>
+        <button class="tab-button" data-tab="shortcuts-tab">Shortcuts</button>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings-tab" class="tab-content active">
+        
+        <!-- Custom API Config -->
+        <div class="card">
+            <div class="switch-container mb-12" id="customAPIToggleContainer" style="margin-bottom: 12px;">
+                <div>
+                    <div class="card-title">Custom AI Engine</div>
+                    <div class="card-subtitle" style="margin-bottom: 0;">Use your own API key</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="useCustomAPI">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div id="customAPIForm">
+                <label class="label">Provider</label>
+                <select id="aiProvider" class="input">
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Claude</option>
+                    <option value="google">Gemini</option>
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="custom">Custom URL</option>
+                </select>
+
+                <div id="customEndpointDiv" class="hidden">
+                    <label class="label">API Endpoint</label>
+                    <input type="text" id="customEndpoint" class="input" placeholder="https://api.example.com/v1/chat">
+                </div>
+
+                <label class="label">API Key</label>
+                <input type="password" id="apiKey" class="input" placeholder="sk-...">
+
+                <label class="label">Model ID</label>
+                <input type="text" id="modelName" class="input" placeholder="e.g. gpt-4o">
+
+                <button id="testAPIConfig" class="btn btn-outline" style="margin-top: 4px;">
+                    Test Connection
+                </button>
+            </div>
+        </div>
+
+        <!-- Free Web AI -->
+        <div class="card">
+            <div class="card-title">Free AI Fallback</div>
+            <div class="card-subtitle">Used when custom API is disabled</div>
+            <div class="provider-toggles">
+                <button id="provider-gemini" class="provider-btn active" data-provider="gemini">Gemini</button>
+                <button id="provider-chatgpt" class="provider-btn" data-provider="chatgpt">ChatGPT</button>
+            </div>
+        </div>
+
+        <!-- UI Settings -->
+        <div class="card">
+            <div class="switch-container mb-12" style="margin-bottom: 12px;">
+                <div>
+                    <div class="card-title">Chat Icon Visibility</div>
+                    <div class="card-subtitle" style="margin-bottom: 0;">Show/hide the floating chat icon</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="chatVisibilityToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="switch-container">
+                <div>
+                    <div class="card-title">Toast Opacity</div>
+                    <div class="card-subtitle" style="margin-bottom: 0;">Shortcut: <span class="shortcut-key" style="margin:0 4px">Opt+O</span></div>
+                </div>
+                <button id="toastOpacityToggle" class="btn btn-outline" style="width: auto; padding: 4px 12px; font-size: 0.75rem;">
+                    <span id="opacityLevel">High</span>
+                </button>
+            </div>
+        </div>
+
+        <button id="uninstallButton" class="btn btn-danger">Uninstall Extension</button>
+    </div>
+
+    <!-- Shortcuts Tab -->
+    <div id="shortcuts-tab" class="tab-content">
+        <div class="card">
+            
+            <div class="shortcut-group">
+                <div class="shortcut-header" style="color: #60A5FA;">Universal</div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+Shift+S</span>
+                    <div class="flex-col">
+                        <div class="shortcut-desc">Search AI</div>
+                        <div><span class="badge" style="margin-left: 0;">SELECT TEXT</span></div>
+                    </div>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+Shift+M</span>
+                    <div class="flex-col">
+                        <div class="shortcut-desc">Solve MCQ</div>
+                        <div><span class="badge" style="margin-left: 0;">SELECT TEXT</span></div>
+                    </div>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+C</span>
+                    <div class="shortcut-desc">Toggle Chatbot</div>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+Shift+V</span>
+                    <div class="shortcut-desc">Drag & Drop Paste</div>
+                </div>
+            </div>
+
+            <div class="shortcut-group">
+                <div class="shortcut-header" style="color: #34D399;">Examly / Iamneo</div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Ctrl+Shift+T</span>
+                    <div class="shortcut-desc">Type Code Answer</div>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+Shift+A</span>
+                    <div class="shortcut-desc">Search Code</div>
+                </div>
+            </div>
+
+            <div class="shortcut-group">
+                <div class="shortcut-header" style="color: #FBBF24;">HackerRank</div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Ctrl+Shift+H</span>
+                    <div class="shortcut-desc">Solve Question</div>
+                </div>
+            </div>
+
+            <div class="shortcut-group" style="margin-bottom: 0;">
+                <div class="shortcut-header" style="color: #F87171;">NPTEL</div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Opt+Shift+N</span>
+                    <div class="flex-col">
+                        <div class="shortcut-desc">Solve MCQ</div>
+                        <div><span class="badge" style="margin-left: 0;">SELECT TEXT</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
